@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,9 +16,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import braynstorm.flowcraft.FlowCraft;
 import braynstorm.flowcraft.tile.TileEntityTank;
 import braynstorm.flowcraft.utils.Utils;
+import buildcraft.api.tools.IToolWrench;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -80,13 +83,53 @@ public class BlockTank extends WrenchableBlock {
 		if (player.isSneaking()) {
 			this.dropBlockAsItem_do(world, x, y, z, stack);
 			this.removeBlockByPlayer(world, player, x, y, z);
+			this.nbt = new NBTTagCompound();
 		} else {
 			int[] tank = this.nbt.getIntArray("tankDetails");
-			System.out.println("Tank at: X: " + x + ", Y: " + y + ", Z: " + z);
-			System.out.println("has " + FluidRegistry.getFluidName(tank[0]) + "  " + tank[1] + "mB");
+			if (tank != null && tank.length == 2) {
 
+				System.out.println("Tank at: X: " + x + ", Y: " + y + ", Z: " + z);
+				System.out.println("has " + FluidRegistry.getFluidName(tank[0]) + "  " + tank[1] + "mB");
+			}
 
 		}
+	}
+
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+		if (!world.isRemote) {
+			ItemStack equippedItemStack = player.getCurrentEquippedItem();
+
+			if (equippedItemStack != null)
+				if (equippedItemStack.getItem() instanceof IToolWrench) { // react to Buildcraft Api ToolWrench
+					this.handleToolWrenchClick(world, x, y, z, player, equippedItemStack);
+
+					return true;
+				} else {
+					TileEntityTank tank = (TileEntityTank) world.getBlockTileEntity(x, y, z);
+					if (tank != null)
+						if (equippedItemStack.getItem().itemID == Item.bucketLava.itemID) {
+							FluidStack fluidstack = new FluidStack(FluidRegistry.LAVA, 1000);
+							if (tank.fill(null, fluidstack, false) == 1000) {
+								tank.fill(null, fluidstack, true);
+								player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty, 1));
+
+								System.out.println("Filled " + fluidstack.getFluid().getName() + ", " + fluidstack.amount);
+							}
+						}
+					return false;
+				}
+			return false;
+		}
+		return true;
+	}
+
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int meta, int fortune) {
+		super.breakBlock(world, x, y, z, meta, fortune);
+		world.removeBlockTileEntity(x, y, z);
+		this.nbt = new NBTTagCompound();
 	}
 
 	@Override
@@ -137,5 +180,10 @@ public class BlockTank extends WrenchableBlock {
 				iconRegister.registerIcon(FlowCraft.MODID + ":" + FlowCraft.REGISTRY_BLOCKTANK_NAME),
 				iconRegister.registerIcon(FlowCraft.MODID + ":" + FlowCraft.REGISTRY_BLOCKTANK_NAME + "Top"),
 				iconRegister.registerIcon(FlowCraft.MODID + ":" + FlowCraft.REGISTRY_BLOCKTANK_NAME + "Bottom") };
+	}
+
+	public Icon[] getIcons() {
+		return new Icon[] {
+				this.icons[0], this.icons[1], this.icons[2] };
 	}
 }

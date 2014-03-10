@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import braynstorm.flowcraft.block.BlockTank;
 import braynstorm.flowcraft.item.ItemFlowch;
 import braynstorm.flowcraft.item.ItemTank;
-import braynstorm.flowcraft.render.TankRenderer;
+import braynstorm.flowcraft.render.RendererTank;
 import braynstorm.flowcraft.tile.TileEntityTank;
 import braynstorm.flowcraft.utils.Utils;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -74,7 +74,7 @@ public class FlowCraft {
 		};
 
 		// TODO render fluid!
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new TankRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new RendererTank());
 
 
 		blockTank = new BlockTank(REGISTRY_BLOCKTANK_ID);

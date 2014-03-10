@@ -24,12 +24,14 @@ public class ItemTank extends ItemBlock {
 	@SideOnly (Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List dataList, boolean bool) {
 
-		if (itemStack.getTagCompound() != null) {
+		if (itemStack.getTagCompound() != null && itemStack.getTagCompound().getIntArray("tankDetails") != null
+			&& itemStack.getTagCompound().getIntArray("tankDetails").length == 2) {
+
 			int[] tank = itemStack.getTagCompound().getIntArray("tankDetails");
 			dataList.add("FluidID: " + tank[0]);
 			dataList.add("Amount: " + tank[1]);
-		} else
-			dataList.add("Something went wrong.");
+
+		}
 	}
 	/*
 	 * 
