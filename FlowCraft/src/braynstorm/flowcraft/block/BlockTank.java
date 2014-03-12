@@ -63,6 +63,7 @@ public class BlockTank extends WrenchableBlock {
 
 		if (l == 3)
 			b0 = 4;
+		// TODO update with a packet
 		world.setBlockMetadataWithNotify(x, y, z, b0, 2);
 	}
 
@@ -106,15 +107,18 @@ public class BlockTank extends WrenchableBlock {
 
 					return true;
 				} else {
-					TileEntityTank tank = (TileEntityTank) world.getBlockTileEntity(x, y, z);
-					if (tank != null)
+					TileEntityTank tileTank = (TileEntityTank) world.getBlockTileEntity(x, y, z);
+					if (tileTank != null)
 						if (equippedItemStack.getItem().itemID == Item.bucketLava.itemID) {
 							FluidStack fluidstack = new FluidStack(FluidRegistry.LAVA, 1000);
-							if (tank.fill(null, fluidstack, false) == 1000) {
-								tank.fill(null, fluidstack, true);
-								player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty, 1));
+							if (tileTank.fill(null, fluidstack, false) == 1000) {
+								tileTank.fill(null, fluidstack, true);
 
-								System.out.println("Filled " + fluidstack.getFluid().getName() + ", " + fluidstack.amount);
+								if (!player.capabilities.isCreativeMode)
+									player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty, 1));
+
+								world.markBlockForUpdate(x, y, z);
+								FlowCraft.log("onBlcokActivated", "tankFilledEvent", world);
 							}
 						}
 					return false;
@@ -123,7 +127,6 @@ public class BlockTank extends WrenchableBlock {
 		}
 		return true;
 	}
-
 
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int meta, int fortune) {

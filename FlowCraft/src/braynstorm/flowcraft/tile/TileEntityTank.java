@@ -6,6 +6,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.TileFluidHandler;
+import braynstorm.flowcraft.FlowCraft;
 import braynstorm.flowcraft.tank.TankFlowTank;
 
 public class TileEntityTank extends TileFluidHandler {
@@ -16,42 +17,39 @@ public class TileEntityTank extends TileFluidHandler {
 
 	public TileEntityTank() {
 		super();
+		this.fluidTank.setTile(this);
 		// this.tank.fill(new FluidStack(FluidRegistry.LAVA, 2000), true);
+	}
+
+	@Override
+	public void updateEntity() {
+
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
+		tag.setInteger("tankFluidID", this.fluidTank.getFluidID());
+		tag.setInteger("tankFluidAmount", this.fluidTank.getFluidAmount());
 
-		int[] details = new int[2];
-
-		if (this.fluidTank.hasFluid()) {
-			FluidStack tankFluid = this.fluidTank.getFluid();
-
-			details[0] = tankFluid != null && tankFluid.fluidID != 0 ? tankFluid.fluidID : null;
-			details[1] = this.fluidTank.getFluidAmount();
-
-			tag.setIntArray("tankDetails", details);
-		}
-
+		FlowCraft.log("readFromNBT", "TankFluidID: " + tag.getInteger("tankFluidID"), this.worldObj);
+		FlowCraft.log("readFromNBT", "TankFluidAmount: " + tag.getInteger("tankFluidAmount"), this.worldObj);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 
-		int[] tankDetails = tag.getIntArray("tankDetails");
+		this.fluidTank.fill(new FluidStack(tag.getInteger("tankFluidID"), tag.getInteger("tankFluidAmount")), true);
 
-		if (tankDetails != null && tankDetails.length == 2 && tankDetails[0] != 0 && tankDetails[1] != 0)
-			this.fluidTank.fill(new FluidStack(tankDetails[0], tankDetails[1]), true);
-		else
-			System.out.println("Couldnt read tile from NBT");
+		FlowCraft.log("readFromNBT", "TankFluidID: " + tag.getInteger("tankFluidID"), this.worldObj);
+		FlowCraft.log("readFromNBT", "TankFluidAmount: " + tag.getInteger("tankFluidAmount"), this.worldObj);
 	}
 
 	@Override
 	public Packet132TileEntityData getDescriptionPacket() {
-		System.out.println("PacketSent");
+		FlowCraft.log("getDescriptionPacket", "", this.worldObj);
 		NBTTagCompound nbtTag = new NBTTagCompound();
 		this.writeToNBT(nbtTag);
 		return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
@@ -59,8 +57,9 @@ public class TileEntityTank extends TileFluidHandler {
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet) {
-		System.out.println("PacketRecieved");
+		FlowCraft.log("onDataPacket", "", this.worldObj);
 		this.readFromNBT(packet.data);
+		this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 	}
 
 

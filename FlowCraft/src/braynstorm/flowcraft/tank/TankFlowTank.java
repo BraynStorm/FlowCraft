@@ -4,6 +4,7 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import braynstorm.flowcraft.tile.TileEntityTank;
 
 public class TankFlowTank extends FluidTank {
 
@@ -36,6 +37,10 @@ public class TankFlowTank extends FluidTank {
 
 	}
 
+	public void setTile(TileEntityTank tile) {
+		this.tile = tile;
+	}
+
 
 	public int getFluidID() {
 		if (this.hasFluid())
@@ -54,9 +59,9 @@ public class TankFlowTank extends FluidTank {
 	/**
 	 * @return Returns {@link int} (0-100).
 	 */
-	public int getFillPrecentage() {
+	public double getFillPrecentage() {
 		if (this.hasFluid())
-			return this.getFluidAmount() / this.capacity;
+			return ((double) this.getFluidAmount() / this.capacity);
 		return 0;
 	}
 
@@ -96,17 +101,22 @@ public class TankFlowTank extends FluidTank {
 	public int fill(FluidStack resource, boolean doFill) {
 
 		this.updateTankFluid();
-		if (resource != null && resource.amount > 0)
-			if (this.hasFluid() && resource.fluidID == this.getFluidID()) {
 
-				int filled = Math.min(this.capacity - resource.amount, resource.amount);
+
+		if (resource != null && resource.amount > 0)
+			if (this.hasFluid() && resource.fluidID == this.getFluidID() && this.capacity >= resource.amount) {
+
+				int filled = 0;
+				if (resource.amount + this.fluid.amount <= this.capacity)
+					filled = resource.amount;
+
 
 				if (doFill)
 					this.fluid.amount += filled;
-
+				// FlowCraft.log("FILL", resource.amount + "mB" + this.capacity, this.tile.worldObj);
 
 				return filled;
-			} else if (this.capacity > resource.amount) {
+			} else if (this.capacity >= resource.amount) {
 				// System.out.println("asdasdsdaads" + resource.fluidID + "  " + this.getFluidID());
 				if (doFill)
 					this.fluid = resource.copy();

@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -23,15 +24,9 @@ public class ItemTank extends ItemBlock {
 	@Override
 	@SideOnly (Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List dataList, boolean bool) {
-
-		if (itemStack.getTagCompound() != null && itemStack.getTagCompound().getIntArray("tankDetails") != null
-			&& itemStack.getTagCompound().getIntArray("tankDetails").length == 2) {
-
-			int[] tank = itemStack.getTagCompound().getIntArray("tankDetails");
-			dataList.add("FluidID: " + tank[0]);
-			dataList.add("Amount: " + tank[1]);
-
-		}
+		NBTTagCompound tag = itemStack.getTagCompound() != null ? itemStack.getTagCompound() : new NBTTagCompound();
+		dataList.add("FluidID: " + tag.getInteger("tankFluidID"));
+		dataList.add("Amount: " + tag.getInteger("tankFluidAmount"));
 	}
 	/*
 	 * 

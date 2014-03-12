@@ -42,8 +42,8 @@ public class RendererTank extends TileEntitySpecialRenderer {
 		TankFlowTank tank = tankEntity.getTank();
 
 		int brightness = tankBlock.getMixedBrightnessForBlock(tankEntity.worldObj, tankEntity.xCoord, tankEntity.yCoord, tankEntity.zCoord);
-
-
+		FlowCraft.log("renderTileEntityAt", "" + tank.getFluidAmount(), entity.getWorldObj());
+		// System.out.println();
 		tsl.setBrightness(brightness);
 		this.bindTexture(TextureMap.locationBlocksTexture);
 		tsl.startDrawingQuads();
@@ -53,16 +53,16 @@ public class RendererTank extends TileEntitySpecialRenderer {
 
 
 		if (tank.hasFluid()) {
-			double fluidHeight = tank.getFillPrecentage() * 16.0D / 100D;
+			double fluidHeight = tank.getFillPrecentage() * 16.0D;
 			double verticalTextureOffset = 16.0 / 100 * (100 - tank.getFillPrecentage());
 
 			Icon fluidTexture = tank.getFluidTexture();
-			this.renderPosXFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
-			this.renderNegXFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
-			this.renderPosYFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
-			this.renderNegYFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
-			this.renderPosZFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
-			this.renderNegZFace(tankEntity, fluidTexture, fluidHeight, verticalTextureOffset);
+			this.renderPosXFace(tankEntity, fluidTexture, fluidHeight);
+			this.renderNegXFace(tankEntity, fluidTexture, fluidHeight);
+			this.renderPosYFace(tankEntity, fluidTexture, fluidHeight);
+			this.renderNegYFace(tankEntity, fluidTexture, fluidHeight);
+			this.renderPosZFace(tankEntity, fluidTexture, fluidHeight);
+			this.renderNegZFace(tankEntity, fluidTexture, fluidHeight);
 		}
 
 		this.renderSolid(tankEntity, icons);
@@ -80,45 +80,29 @@ public class RendererTank extends TileEntitySpecialRenderer {
 		// TessellationManager.renderNegativeZFace(0, 0, 0, 16, 16, icons[0]);
 	}
 
-	private void renderPosXFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 0);
-		TessellationManager.renderNegativeXFace(0.01D, 1, 1, fluidHeight, 14, fluidTexture);
+	private void renderPosXFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
+		TessellationManager.renderNegativeXFace(0.01D, 0, 0, fluidHeight, 16, 0, 0, 16, fluidHeight, fluidTexture, TessellationManager.pixel);
+	}
 
+	private void renderNegXFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
+		TessellationManager.renderPositiveXFace(15.99D, 0, 0, fluidHeight, 16, 0, 0, 16, fluidHeight, fluidTexture, TessellationManager.pixel);
 
 	}
 
-	private void renderNegXFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 1);
-		// System.out.println(fluidHeight);
-		TessellationManager.renderPositiveXFace(15.99D, 1, 1, fluidHeight, 14, fluidTexture);
-
+	private void renderPosYFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
+		TessellationManager.renderPositiveYFace(0, fluidHeight, 0, 16, 16, fluidTexture);
 	}
 
-	private void renderPosYFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 2);
-
-
-		double h = 0.5D;
-		TessellationManager.renderPositiveYFace(0, h, 0, 16, 16, fluidTexture);
-	}
-
-	private void renderNegYFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 3);
-
+	private void renderNegYFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
 		TessellationManager.renderNegativeYFace(0, 0.01D, 0, 16, 16, fluidTexture);
-
 	}
 
-	private void renderPosZFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 4);
-
-		TessellationManager.renderNegativeZFace(1, 1, 0.01D, fluidHeight, 14, fluidTexture);
-
+	private void renderPosZFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
+		TessellationManager.renderNegativeZFace(0, 0, 0.01D, 16, fluidHeight, 0, 0, 16, fluidHeight, fluidTexture, TessellationManager.pixel);
 	}
 
-	private void renderNegZFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight, double verticalTextureOffset) {
-		// render(tankEntity, icons, fluidTexture, fluidHeight, verticalTextureOffset, 5);
-		TessellationManager.renderPositiveZFace(1, 1, 15.99D, fluidHeight, 14, fluidTexture);
+	private void renderNegZFace(TileEntityTank tankEntity, Icon fluidTexture, double fluidHeight) {
+		TessellationManager.renderPositiveZFace(0, 0, 15.99D, 16, fluidHeight, 0, 0, 16, fluidHeight, fluidTexture, TessellationManager.pixel);
 	}
 
 	/*

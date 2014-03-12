@@ -2,6 +2,7 @@ package braynstorm.flowcraft;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import braynstorm.flowcraft.block.BlockTank;
 import braynstorm.flowcraft.item.ItemFlowch;
 import braynstorm.flowcraft.item.ItemTank;
@@ -99,4 +100,22 @@ public class FlowCraft {
 
 	}
 
+	/**
+	 * Logs something to the console.
+	 * 
+	 * @param class The class of the log
+	 * @param string
+	 *            the message
+	 */
+	public static void log(String method, String string, World world) {
+		String worldType = "CLIENT";
+		if (world != null && world.isRemote)
+			worldType = "SERVER";
+
+		System.out.println("[" + method + "][" + worldType + "] --> " + string);
+	}
+
+	public static void log(String method, String string) {
+		log(method, string, null);
+	}
 }
