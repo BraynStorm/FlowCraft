@@ -61,7 +61,7 @@ public class TankFlowTank extends FluidTank {
 	 */
 	public double getFillPrecentage() {
 		if (this.hasFluid())
-			return ((double) this.getFluidAmount() / this.capacity);
+			return (int) (((double) this.getFluidAmount() / this.capacity) * 100);
 		return 0;
 	}
 

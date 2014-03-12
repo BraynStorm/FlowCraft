@@ -42,7 +42,7 @@ public class RendererTank extends TileEntitySpecialRenderer {
 		TankFlowTank tank = tankEntity.getTank();
 
 		int brightness = tankBlock.getMixedBrightnessForBlock(tankEntity.worldObj, tankEntity.xCoord, tankEntity.yCoord, tankEntity.zCoord);
-		FlowCraft.log("renderTileEntityAt", "" + tank.getFluidAmount(), entity.getWorldObj());
+		// FlowCraft.log("renderTileEntityAt", "" + tank.getFluidAmount(), entity.getWorldObj());
 		// System.out.println();
 		tsl.setBrightness(brightness);
 		this.bindTexture(TextureMap.locationBlocksTexture);
@@ -53,7 +53,7 @@ public class RendererTank extends TileEntitySpecialRenderer {
 
 
 		if (tank.hasFluid()) {
-			double fluidHeight = tank.getFillPrecentage() * 16.0D;
+			double fluidHeight = (tank.getFillPrecentage() * 16.0D / 100.0D) - 0.01D;
 			double verticalTextureOffset = 16.0 / 100 * (100 - tank.getFillPrecentage());
 
 			Icon fluidTexture = tank.getFluidTexture();

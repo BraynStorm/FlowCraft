@@ -44,7 +44,11 @@ public class BlockTank extends WrenchableBlock {
 
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityTank();
+		TileEntityTank tank = new TileEntityTank();
+		// System.out.println("CREATE TILE ENTTY");
+		// tank.readFromNBT(tag);
+
+		return tank;
 	}
 
 	@Override
@@ -65,6 +69,8 @@ public class BlockTank extends WrenchableBlock {
 			b0 = 4;
 		// TODO update with a packet
 		world.setBlockMetadataWithNotify(x, y, z, b0, 2);
+		((TileEntityTank) world.getBlockTileEntity(x, y, z)).readFromNBTInit(itemStack.getTagCompound());;
+
 	}
 
 	// public void destroy()
@@ -96,6 +102,14 @@ public class BlockTank extends WrenchableBlock {
 		}
 	}
 
+
+	/*
+	 * @Override public void onPostBlockPlaced(World world, int x, int y, int z, int meta) { TileEntityTank tile = Utils.getTileEntityAt(world,
+	 * TileEntityTank.class, x, y, z); tile.set
+	 * 
+	 * }
+	 */
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
 		if (!world.isRemote) {
@@ -116,9 +130,7 @@ public class BlockTank extends WrenchableBlock {
 
 								if (!player.capabilities.isCreativeMode)
 									player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty, 1));
-
-								world.markBlockForUpdate(x, y, z);
-								FlowCraft.log("onBlcokActivated", "tankFilledEvent", world);
+								// FlowCraft.log("onBlcokActivated", "tankFilledEvent", world);
 							}
 						}
 					return false;
