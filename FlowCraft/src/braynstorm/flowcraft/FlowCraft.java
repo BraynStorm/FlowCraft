@@ -27,7 +27,7 @@ public class FlowCraft {
 
 	public static final String	MODID						= "flowcraft";
 	public static final String	MODNAME						= "FlowCraft";
-	public static final String	VERSION						= "0.0.001";
+	public static final String	VERSION						= "Pre-Alpha 0.0";
 	public static final String	REGISTRY_BLOCKTANK_NAME		= "blockTank";
 	public static final String	REGISTRY_BLOCKTANK_KEY		= MODID + ":" + REGISTRY_BLOCKTANK_NAME;
 	public static final String	REGISTRY_ITEMFLOWCH_NAME	= "itemFlowch";
@@ -52,12 +52,6 @@ public class FlowCraft {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e) {
-		// System.out.println(e.getSuggestedConfigurationFile());
-		// Liquids...
-
-		/*
-		 * TODO Add a Flowch. TODO Test the tankMaking with a BlockTank form SFT.
-		 */
 
 		creativeTab = new CreativeTabs("FlowCraft") {
 
@@ -97,6 +91,7 @@ public class FlowCraft {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
 		// Buckets and stuff
+
 
 	}
 

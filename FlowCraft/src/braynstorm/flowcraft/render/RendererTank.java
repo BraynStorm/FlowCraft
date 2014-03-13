@@ -5,19 +5,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraft.util.ResourceLocation;
-import braynstorm.flowcraft.FlowCraft;
 import braynstorm.flowcraft.block.BlockTank;
-import braynstorm.flowcraft.model.ModelTank;
 import braynstorm.flowcraft.model.TessellationManager;
 import braynstorm.flowcraft.tank.TankFlowTank;
 import braynstorm.flowcraft.tile.TileEntityTank;
 
 public class RendererTank extends TileEntitySpecialRenderer {
-
-	private static final ResourceLocation	texture	= new ResourceLocation(FlowCraft.MODID, "textures/model/tankModel.png");
-
-	private ModelTank						model	= new ModelTank();
 
 	public RendererTank() {
 		super();
