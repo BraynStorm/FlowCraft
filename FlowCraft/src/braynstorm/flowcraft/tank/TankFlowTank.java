@@ -86,15 +86,9 @@ public class TankFlowTank extends FluidTank {
 	 * </pre>
 	 */
 	public boolean hasFluid() {
-		if (this.fluid == null)
-			return false;
-
-		if (this.fluid.fluidID == 0)
-			return false;
-
-		if (this.fluid.amount == 0)
-			return false;
-		return true;
+		if (this.fluid != null && this.fluid.amount != 0 && this.fluid.fluidID != 0)
+			return true;
+		return false;
 	}
 
 	@Override
@@ -104,8 +98,8 @@ public class TankFlowTank extends FluidTank {
 
 
 		if (resource != null && resource.amount > 0)
-			if (this.hasFluid() && resource.fluidID == this.getFluidID() && this.capacity >= resource.amount) {
-
+			if (this.hasFluid() && resource.isFluidEqual(this.getFluid()) && this.capacity >= resource.amount) {
+				// System.out.println(resource.fluidID + ",,,,," + this.getFluidID());
 				int filled = 0;
 				if (resource.amount + this.fluid.amount <= this.capacity)
 					filled = resource.amount;
@@ -116,7 +110,7 @@ public class TankFlowTank extends FluidTank {
 				// FlowCraft.log("FILL", resource.amount + "mB" + this.capacity, this.tile.worldObj);
 
 				return filled;
-			} else if (this.capacity >= resource.amount) {
+			} else if (this.capacity >= resource.amount && !this.hasFluid()) {
 				// System.out.println("asdasdsdaads" + resource.fluidID + "  " + this.getFluidID());
 				if (doFill)
 					this.fluid = resource.copy();
@@ -131,18 +125,18 @@ public class TankFlowTank extends FluidTank {
 	public FluidStack drain(int amount, boolean doDrain) {
 		if (this.hasFluid()) {
 
-			FluidStack stack;
+			FluidStack stack = null;
 
 			if (this.capacity >= amount && this.fluid.amount >= amount) {
 				stack = new FluidStack(this.getFluidID(), amount);
 
 				if (doDrain)
-					this.fluid = stack.copy();
+					this.fluid.amount -= stack.amount;
 
 			}
 
 			this.updateTankFluid();
-			return null;
+			return stack;
 		} else
 			return null;
 	}

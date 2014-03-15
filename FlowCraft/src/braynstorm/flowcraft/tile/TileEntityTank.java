@@ -12,7 +12,7 @@ import braynstorm.flowcraft.tank.TankFlowTank;
 
 public class TileEntityTank extends TileFluidHandler {
 
-	private TankFlowTank	fluidTank	= new TankFlowTank(4000);
+	private TankFlowTank	fluidTank	= new TankFlowTank(8000);
 
 	// private Packet132TileEntityData packet
 
@@ -97,6 +97,11 @@ public class TileEntityTank extends TileFluidHandler {
 		FluidStack t = this.fluidTank.drain(amount, doDrain);
 		this.updateTank();
 		return t;
+	}
+
+
+	public int getFluidAmount() {
+		return this.fluidTank.getFluidAmount();
 	}
 
 

@@ -3,6 +3,7 @@ package braynstorm.flowcraft.block;
 import java.util.Random;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -15,8 +16,10 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import braynstorm.flowcraft.FlowCraft;
 import braynstorm.flowcraft.tile.TileEntityTank;
 import braynstorm.flowcraft.utils.Utils;
@@ -92,13 +95,14 @@ public class BlockTank extends WrenchableBlock {
 			this.removeBlockByPlayer(world, player, x, y, z);
 			this.nbt = new NBTTagCompound();
 		} else {
-			int[] tank = this.nbt.getIntArray("tankDetails");
-			if (tank != null && tank.length == 2) {
+			NBTTagCompound tag = stack.getTagCompound();
+			int id = tag.getInteger("tankFluidID");
+			int amount = tag.getInteger("tankFluidAmount");
 
-				System.out.println("Tank at: X: " + x + ", Y: " + y + ", Z: " + z);
-				System.out.println("has " + FluidRegistry.getFluidName(tank[0]) + "  " + tank[1] + "mB");
-			}
-
+			if (id == 0)
+				Minecraft.getMinecraft().thePlayer.addChatMessage("Tank is empty :(");
+			else
+				Minecraft.getMinecraft().thePlayer.addChatMessage("Tank has " + amount + "mB" + " of " + FluidRegistry.getFluid(id).getLocalizedName());
 		}
 	}
 
@@ -118,12 +122,11 @@ public class BlockTank extends WrenchableBlock {
 			if (equippedItemStack != null)
 				if (equippedItemStack.getItem() instanceof IToolWrench) { // react to Buildcraft Api ToolWrench
 					this.handleToolWrenchClick(world, x, y, z, player, equippedItemStack);
-
 					return true;
 				} else {
 					TileEntityTank tileTank = (TileEntityTank) world.getBlockTileEntity(x, y, z);
 					if (tileTank != null)
-						if (equippedItemStack.getItem().itemID == Item.bucketLava.itemID) {
+						if (equippedItemStack.getItem().itemID == Item.bucketLava.itemID) { // Lava Bucket
 							FluidStack fluidstack = new FluidStack(FluidRegistry.LAVA, 1000);
 							if (tileTank.fill(null, fluidstack, false) == 1000) {
 								tileTank.fill(null, fluidstack, true);
@@ -132,13 +135,43 @@ public class BlockTank extends WrenchableBlock {
 									player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketEmpty, 1));
 								// FlowCraft.log("onBlcokActivated", "tankFilledEvent", world);
 							}
+						} else if (equippedItemStack.getItem().itemID == Item.bucketEmpty.itemID) { // Empty Bucket
+
+							FluidStack drained = tileTank.drain(ForgeDirection.DOWN, 1000, false);
+
+							if (drained != null && drained.amount >= 1000) {
+
+								tileTank.drain(ForgeDirection.DOWN, 1000, true);
+								player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Item.bucketLava, 1));
+							}
+						} else if (equippedItemStack.getItem() instanceof IFluidContainerItem) { // IFluidContainer
+
+							NBTTagCompound tag = equippedItemStack.getTagCompound();
+
+							if (tag != null && tag.hasKey("Fluid")) {
+								tag = tag.getCompoundTag("Fluid");
+								// Just drain the container as much as the tank can fit;
+								((IFluidContainerItem) equippedItemStack.getItem()).drain(	equippedItemStack,
+																							tileTank.fill(	ForgeDirection.UP,
+																											FluidStack.loadFluidStackFromNBT(tag),
+																											true),
+																							true);
+							} else {
+								NBTTagCompound fluidTag = new NBTTagCompound();
+								IFluidContainerItem item = ((IFluidContainerItem) equippedItemStack.getItem());
+								if (item.getCapacity(equippedItemStack) <= tileTank.getFluidAmount())
+									item.fill(equippedItemStack, tileTank.drain(ForgeDirection.DOWN, item.getCapacity(equippedItemStack), true), true);
+
+							}
 						}
+
 					return false;
 				}
 			return false;
 		}
 		return true;
 	}
+
 
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int meta, int fortune) {

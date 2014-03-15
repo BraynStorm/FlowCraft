@@ -42,10 +42,10 @@ public final class Utils {
 	 *            The unique name of the {@link Block}.
 	 */
 
-	public static void registerBlock(Block block, String uniqueName, String name) {
+	public static void registerBlock(Block block, String uniqueName) {
 
 		GameRegistry.registerBlock(block, uniqueName);
-		LanguageRegistry.addName(block, name);
+		// LanguageRegistry.addName(block, name);
 	}
 
 	/**
@@ -56,10 +56,10 @@ public final class Utils {
 	 * @param uniqueName
 	 *            The unique name of the {@link Item}.
 	 */
-	public static void registerItem(Item item, String uniqueName, String name) {
+	public static void registerItem(Item item, String uniqueName) {
 
 		GameRegistry.registerItem(item, uniqueName);
-		LanguageRegistry.addName(item, name);
+		// LanguageRegistry.addName(item, name);
 	}
 
 
