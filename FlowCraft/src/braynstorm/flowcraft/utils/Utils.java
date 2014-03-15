@@ -61,4 +61,60 @@ public final class Utils {
 		GameRegistry.registerItem(item, uniqueName);
 		LanguageRegistry.addName(item, name);
 	}
+
+
+	public static int[] getXYZForSide(int x, int y, int z, int side) {
+		int nx = x, ny = y, nz = z;
+
+		switch (side) {
+			case 0:
+				ny--;
+				break;
+			case 1:
+				ny++;
+				break;
+			case 2:
+				nz--;
+				break;
+			case 3:
+				nz++;
+				break;
+			case 4:
+				nx--;
+				break;
+			case 5:
+				nx++;
+				break;
+		}
+
+		return new int[] {
+				nx, ny, nz };
+
+	}
+
+	public static int getXForSide(int x, int side) {
+		if (side == 4)
+			return --x;
+		if (side == 5)
+			return ++x;
+		return x;
+	}
+
+	public static int getZForSide(int z, int side) {
+		if (side == 2)
+			return --z;
+		if (side == 3)
+			return ++z;
+		return z;
+	}
+
+	public static int getYForSide(int y, int side) {
+		if (side == 0)
+			return --y;
+		if (side == 1)
+			return ++y;
+		return y;
+	}
+
+
 }

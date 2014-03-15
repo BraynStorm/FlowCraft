@@ -16,6 +16,7 @@ public class ItemTank extends ItemBlock {
 		super(id);
 
 		this.setMaxStackSize(1);
+
 		// this.setUnlocalizedName(FlowCraft.REGISTRY_ITEMTANK_NAME);
 		// this.setTextureName(FlowCraft.MODID + ":" + FlowCraft.REGISTRY_ITEMTANK_NAME);
 		// this.setCreativeTab(FlowCraft.creativeTab);

@@ -2,10 +2,17 @@ package braynstorm.flowcraft;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import braynstorm.flowcraft.block.BlockTank;
+import braynstorm.flowcraft.item.ItemCapsule;
 import braynstorm.flowcraft.item.ItemFlowch;
 import braynstorm.flowcraft.item.ItemTank;
+import braynstorm.flowcraft.render.RendererCapsule;
 import braynstorm.flowcraft.render.RendererTank;
 import braynstorm.flowcraft.tile.TileEntityTank;
 import braynstorm.flowcraft.utils.Utils;
@@ -25,30 +32,39 @@ import cpw.mods.fml.relauncher.SideOnly;
 @NetworkMod (clientSideRequired = true, serverSideRequired = true)
 public class FlowCraft {
 
-	public static final String	MODID						= "flowcraft";
-	public static final String	MODNAME						= "FlowCraft";
-	public static final String	VERSION						= "Pre-Alpha 0.0";
-	public static final String	REGISTRY_BLOCKTANK_NAME		= "blockTank";
-	public static final String	REGISTRY_BLOCKTANK_KEY		= MODID + ":" + REGISTRY_BLOCKTANK_NAME;
-	public static final String	REGISTRY_ITEMFLOWCH_NAME	= "itemFlowch";
-	public static final String	REGISTRY_ITEMFLOWCH_KEY		= MODID + ":" + REGISTRY_ITEMFLOWCH_NAME;
-	public static final String	REGISTRY_ITEMTANK_NAME		= "itemTank";
-	public static final String	REGISTRY_ITEMTANK_KEY		= MODID + ":" + REGISTRY_ITEMTANK_NAME;
+	public static final String		MODID						= "flowcraft";
+	public static final String		MODNAME						= "FlowCraft";
+	public static final String		VERSION						= "0.0.012";
+	public static final String		REGISTRY_BLOCKTANK_NAME		= "blockTank";
+	public static final String		REGISTRY_BLOCKTANK_KEY		= MODID + ":" + REGISTRY_BLOCKTANK_NAME;
 
-	public static CreativeTabs	creativeTab;
-	public static final int		REGISTRY_BLOCKTANK_ID		= 3800;
-	public static final int		REGISTRY_ITEMFLOWCH_ID		= 4200;
-	public static final int		REGISTRY_ITEMTANK_ID		= REGISTRY_BLOCKTANK_ID - 256;
+	public static final String		REGISTRY_ITEMFLOWCH_NAME	= "itemFlowch";
+	public static final String		REGISTRY_ITEMFLOWCH_KEY		= MODID + ":" + REGISTRY_ITEMFLOWCH_NAME;
+	public static final String		REGISTRY_ITEMTANK_NAME		= "itemTank";
+	public static final String		REGISTRY_ITEMTANK_KEY		= MODID + ":" + REGISTRY_ITEMTANK_NAME;
+	public static final String		REGISTRY_ITEMCAPSULE_NAME	= "itemCapsule";
+	public static final String		REGISTRY_ITEMCAPSULE_KEY	= MODID + ":" + REGISTRY_ITEMCAPSULE_NAME;
+
+	public static CreativeTabs		creativeTab;
+	public static final int			REGISTRY_BLOCKTANK_ID		= 3800;
+	public static final int			REGISTRY_ITEMFLOWCH_ID		= 4200;
+	public static final int			REGISTRY_ITEMTANK_ID		= REGISTRY_BLOCKTANK_ID - 256;
+	public static final int			REGISTRY_ITEMCAPSULE_ID		= 4900;
 
 
-	public static BlockTank		blockTank;
+	public static BlockTank			blockTank;
 
-	public static Item			itemFlowch;
-	public static Item			itemTank;
+	public static Item				itemFlowch;
+	public static Item				itemTank;
+	public static Item				itemCapsule;
+
+
+	public static RendererTank		rendererTank				= new RendererTank();
+	public static RendererCapsule	rendererCapsule				= new RendererCapsule();
 
 
 	@Instance (MODID)
-	public static FlowCraft		instance;
+	public static FlowCraft			instance;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e) {
@@ -68,18 +84,34 @@ public class FlowCraft {
 			}
 		};
 
-		// TODO render fluid!
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, new RendererTank());
+
+		// stack1.setTagCompound(taggy1);
+
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, rendererTank);
+
+		MinecraftForgeClient.registerItemRenderer(REGISTRY_ITEMCAPSULE_ID, rendererCapsule);
 
 
 		blockTank = new BlockTank(REGISTRY_BLOCKTANK_ID);
-		Utils.registerBlock(blockTank, REGISTRY_BLOCKTANK_NAME, "Tank");
+		Utils.registerBlock(blockTank, REGISTRY_BLOCKTANK_NAME, REGISTRY_BLOCKTANK_NAME);
 
 		itemFlowch = new ItemFlowch(REGISTRY_ITEMFLOWCH_ID);
 		itemTank = new ItemTank(REGISTRY_ITEMTANK_ID);
-		Utils.registerItem(itemFlowch, REGISTRY_ITEMFLOWCH_NAME, "Flowch");
-		Utils.registerItem(itemTank, REGISTRY_ITEMTANK_NAME, "Tank");
+		itemCapsule = new ItemCapsule(REGISTRY_ITEMCAPSULE_ID, 1000);
+		Utils.registerItem(itemFlowch, REGISTRY_ITEMFLOWCH_NAME, REGISTRY_ITEMFLOWCH_NAME);
+		Utils.registerItem(itemTank, REGISTRY_ITEMTANK_NAME, REGISTRY_ITEMTANK_NAME);
+		Utils.registerItem(itemCapsule, REGISTRY_ITEMCAPSULE_NAME, REGISTRY_ITEMCAPSULE_NAME);
 
+
+		NBTTagCompound taggy1 = new NBTTagCompound();
+		taggy1.setInteger("fluidID", 2);
+		taggy1.setInteger("fluidAmount", 1000);
+
+
+		ItemStack stack1 = new ItemStack(itemCapsule);
+
+		FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("lava", 1000), stack1, new ItemStack(itemCapsule));
 
 		GameRegistry.registerTileEntity(TileEntityTank.class, "tileTankkkk");
 	}
