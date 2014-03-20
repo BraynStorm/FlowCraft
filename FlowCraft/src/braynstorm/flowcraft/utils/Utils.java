@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -92,6 +93,9 @@ public final class Utils {
 
 	}
 
+	/**
+	 * FluidCapsule sides
+	 */
 	public static int getXForSide(int x, int side) {
 		if (side == 4)
 			return --x;
@@ -100,6 +104,9 @@ public final class Utils {
 		return x;
 	}
 
+	/**
+	 * FluidCapsule sides
+	 */
 	public static int getZForSide(int z, int side) {
 		if (side == 2)
 			return --z;
@@ -108,6 +115,9 @@ public final class Utils {
 		return z;
 	}
 
+	/**
+	 * FluidCapsule sides
+	 */
 	public static int getYForSide(int y, int side) {
 		if (side == 0)
 			return --y;
@@ -117,4 +127,28 @@ public final class Utils {
 	}
 
 
+	public static TileEntity[] getAttachedTileEntities(World world, int x, int y, int z) {
+		return new TileEntity[] {
+				world.getBlockTileEntity(x + 1, y, z),
+				world.getBlockTileEntity(x - 1, y, z),
+				world.getBlockTileEntity(x, y + 1, z),
+				world.getBlockTileEntity(x, y - 1, z),
+				world.getBlockTileEntity(x, y, z + 1),
+				world.getBlockTileEntity(x, y, z - 1) };
+	}
+
+
+	public static <T extends TileEntity> T getFirstAttachedTileEntity(World world, int x, int y, int z, Class <T> castTo) {
+		TileEntity[] tiles = getAttachedTileEntities(world, x, y, z);
+
+		for (TileEntity tile : tiles)
+			if (tile != null && tile.getClass() == castTo)
+				return (T) tile;
+		return null;
+		// TileFluidHandler tileTank = (TileFluidHandler) tile;
+		// FluidTankInfo info = tileTank.getTankInfo(ForgeDirection.UP)[0];
+		// System.out.println(info.fluid);
+		// if (info.fluid != null)
+		// System.out.println("Attached tank has " + info.fluid.amount + "mb of " + info.fluid.getFluid().getLocalizedName());
+	}
 }

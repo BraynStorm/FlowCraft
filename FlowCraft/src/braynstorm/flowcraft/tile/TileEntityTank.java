@@ -3,10 +3,9 @@ package braynstorm.flowcraft.tile;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.TileFluidHandler;
 import braynstorm.flowcraft.tank.TankFlowTank;
 
@@ -22,11 +21,11 @@ public class TileEntityTank extends TileFluidHandler {
 		// this.tank.fill(new FluidStack(FluidRegistry.LAVA, 2000), true);
 	}
 
-
-	@Override
-	public void updateEntity() {
-
-	}
+	// @Override
+	// public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	// return new FluidTankInfo[] {
+	// this.fluidTank.getInfo() };
+	// }
 
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
@@ -37,6 +36,12 @@ public class TileEntityTank extends TileFluidHandler {
 
 		// FlowCraft.log("writeFromNBT", "TankFluidID: " + tag.getInteger("tankFluidID"), this.worldObj);
 		// FlowCraft.log("writeFromNBT", "TankFluidAmount: " + tag.getInteger("tankFluidAmount"), this.worldObj);
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection dir) {
+		return new FluidTankInfo[] {
+			this.fluidTank.getInfo() };
 	}
 
 	@Override
@@ -52,14 +57,10 @@ public class TileEntityTank extends TileFluidHandler {
 			tag.setInteger("tankFluidAmount", 0);
 		}
 		this.fluidTank.setFluid(new FluidStack(tag.getInteger("tankFluidID"), tag.getInteger("tankFluidAmount")));
-
-		// FlowCraft.log("readFromNBT", "TankFluidID: " + tag.getInteger("tankFluidID"), this.worldObj);
-		// FlowCraft.log("readFromNBT", "TankFluidAmount: " + tag.getInteger("tankFluidAmount"), this.worldObj);
 	}
 
 	@Override
 	public Packet132TileEntityData getDescriptionPacket() {
-		// FlowCraft.log("getDescriptionPacket", "", this.worldObj);
 		NBTTagCompound nbtTag = new NBTTagCompound();
 		this.writeToNBT(nbtTag);
 		return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
@@ -67,7 +68,6 @@ public class TileEntityTank extends TileFluidHandler {
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData packet) {
-		// FlowCraft.log("onDataPacket", packet.data.getInteger("tankFluidAmount") + "mb", this.worldObj);
 		this.readFromNBT(packet.data);
 		this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 	}
@@ -78,16 +78,14 @@ public class TileEntityTank extends TileFluidHandler {
 	}
 
 	public void updateTank() {
-		// System.out.println(this.fluidTank.getFillPrecentage());
-		if (this.fluidTank.getFillPrecentage() > 0D && this.fluidTank.getFluid().fluidID == FluidRegistry.LAVA.getID())
-			this.worldObj.setLightValue(EnumSkyBlock.Block, this.xCoord, this.yCoord, this.zCoord, (int) (15 * this.fluidTank.getFillPrecentage() / 100));
+		// if (this.fluidTank.getFillPrecentage() > 0D && this.fluidTank.getFluid().fluidID == FluidRegistry.LAVA.getID())
+		// this.worldObj.setLightValue(EnumSkyBlock.Block, this.xCoord, this.yCoord, this.zCoord, (int) (15 * this.fluidTank.getFillPrecentage() / 100));
 		this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 	}
 
 	@Override
 	public int fill(ForgeDirection dir, FluidStack resource, boolean doFill) {
 		int t = this.fluidTank.fill(resource, doFill);
-		// FlowCraft.log("FILL", "Filling with " + resource.amount, this.worldObj);
 		this.updateTank();
 		return t;
 	}

@@ -4,6 +4,7 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
 import braynstorm.flowcraft.tile.TileEntityTank;
 
 public class TankFlowTank extends FluidTank {
@@ -32,7 +33,7 @@ public class TankFlowTank extends FluidTank {
 
 		if (!this.hasFluid())
 			return null;
-		// System.out.println("getting true texture");
+		// System.out.println(this.hasFluid());
 		return this.fluid.getFluid().getIcon();
 
 	}
@@ -72,6 +73,11 @@ public class TankFlowTank extends FluidTank {
 		if (!this.hasFluid())
 			this.fluid = null;
 		return;
+	}
+
+	@Override
+	public FluidTankInfo getInfo() {
+		return new FluidTankInfo(this.fluid, this.capacity);
 	}
 
 	/**
