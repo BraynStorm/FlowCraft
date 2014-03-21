@@ -18,6 +18,7 @@ import braynstorm.flowcraft.item.ItemFlowch;
 import braynstorm.flowcraft.item.ItemTank;
 import braynstorm.flowcraft.materials.MaterialBlaze;
 import braynstorm.flowcraft.materials.MaterialFlowCraftMachine;
+import braynstorm.flowcraft.recipe.RecipeManager;
 import braynstorm.flowcraft.render.RendererCapsule;
 import braynstorm.flowcraft.render.RendererTank;
 import braynstorm.flowcraft.tile.TileEntityFluidFurnace;
@@ -174,7 +175,8 @@ public class FlowCraft {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
 		// Buckets and stuff
-
+		RecipeManager.registerRecipe(new ItemStack(itemFlowch), new ItemStack(itemTank));
+		RecipeManager.registerRecipe(new ItemStack(Item.ingotIron), new ItemStack(Item.ingotGold), new ItemStack(itemCapsule));
 
 	}
 
